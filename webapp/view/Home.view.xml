@@ -1,0 +1,223 @@
+<mvc:View
+    controllerName="zcrmktmarketingreqlist.marketingcampaignreqlist.controller.Home"
+    xmlns:filterbar="sap.ui.comp.filterbar"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns:core="sap.ui.core"
+    xmlns:smartList="sap.ui.comp.smartlist"
+    xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+    xmlns:smartTable="sap.ui.comp.smarttable"
+    xmlns="sap.m"
+>
+    <Page
+        id="_IDGenPage1"
+        title="{i18n>title}"
+    >
+        <smartFilterBar:SmartFilterBar
+            id="_IDGenSmartFilterBar"
+            entitySet="RequestSet"
+            showClearOnFB="false"
+            advancedMode="false"
+            showAllFilters="false"
+            showMessages="false"
+            showFilterConfiguration="false"
+            useToolbar="false"
+        >
+            <smartFilterBar:controlConfiguration>
+                <smartFilterBar:ControlConfiguration
+                    key="RequestId"
+                    index="1"
+                    label="Request Id"
+                    width="300px"
+                    visibleInAdvancedArea="true"
+                >
+                    <smartFilterBar:customControl>
+                        <Input value="{filterModel>/RequestId}" />
+                    </smartFilterBar:customControl>
+                </smartFilterBar:ControlConfiguration>
+
+                <smartFilterBar:ControlConfiguration
+                    key="Status"
+                    index="2"
+                    label="Status"
+                    visibleInAdvancedArea="true"
+                >
+                    <smartFilterBar:customControl>
+                        <ComboBox
+                            id="requestStatus"
+                            change="onStatusChange"
+                        >
+                            <items>
+                                <core:Item
+                                    key="PCM"
+                                    text="Pending with Commercial Operations Manager"
+                                />
+                                <core:Item
+                                    key="PMH"
+                                    text="Pending with Marketing Head"
+                                />
+                                <core:Item
+                                    key="PGM"
+                                    text="Pending with GA Immigration &amp; Admin Manager"
+                                />
+                                <core:Item
+                                    key="PGS"
+                                    text="Pending with GA Specialist"
+                                />
+
+                                <core:Item
+                                    key="APR"
+                                    text="Approved"
+                                />
+                                <core:Item
+                                    key="REJ"
+                                    text="Rejected"
+                                />
+                                <core:Item
+                                    key="DRF"
+                                    text="Draft"
+                                />
+                                <core:Item
+                                    key="INI"
+                                    text="Initiated"
+                                />
+                            </items>
+                        </ComboBox>
+                    </smartFilterBar:customControl>
+                </smartFilterBar:ControlConfiguration>
+
+                <smartFilterBar:ControlConfiguration
+                    key="PermitType"
+                    index="3"
+                    label="Permit Type"
+                    visibleInAdvancedArea="true"
+                >
+                    <smartFilterBar:customControl>
+                        <ComboBox
+                            id="permitType"
+                            change="onSelectionChange"
+                        >
+                            <items>
+                                <core:Item
+                                    key="SO"
+                                    text="Special Offer"
+                                />
+                                <core:Item
+                                    key="RD"
+                                    text="Raffle Draw"
+                                />
+                                <core:Item
+                                    key="SW"
+                                    text="Scratch &amp; Win"
+                                />
+                                <core:Item
+                                    key="SA"
+                                    text="Sales"
+                                />
+                                <core:Item
+                                    key="AS"
+                                    text="Advertising Stickers"
+                                />
+                            </items>
+                        </ComboBox>
+                    </smartFilterBar:customControl>
+                </smartFilterBar:ControlConfiguration>
+                <smartFilterBar:ControlConfiguration
+                    visible="{filterModel>/visible}"
+                    key="RequesterName"
+                    index="5"
+                    label="Requester Name"
+                    width="300px"
+                    visibleInAdvancedArea="true"
+                >
+                    <smartFilterBar:customControl>
+                        <Input value="{filterModel>/RequesterId}" />
+                    </smartFilterBar:customControl>
+                </smartFilterBar:ControlConfiguration>
+                <smartFilterBar:ControlConfiguration
+                    key="InitiatedDate"
+                    index="4"
+                    label="Request Date"
+                    visibleInAdvancedArea="true"
+                >
+                    <smartFilterBar:customControl>
+                        <DateRangeSelection
+                            value="{filterModel>/InitiatedDate}"
+                        />
+                    </smartFilterBar:customControl>
+                </smartFilterBar:ControlConfiguration>
+            </smartFilterBar:controlConfiguration>
+            <!-- <smartFilterBar:filterGroupItems>
+                   <filterbar:FilterGroupItem groupName="A">
+                   <filterbar:control>
+                   </filterbar:control>
+                   </filterbar:FilterGroupItem>
+
+     
+
+    </smartFilterBar:filterGroupItems> -->
+            <smartFilterBar:layoutData>
+                <FlexItemData shrinkFactor="0" />
+            </smartFilterBar:layoutData>
+        </smartFilterBar:SmartFilterBar>
+
+        <smartTable:SmartTable
+            id="_IDGenSmartTable"
+            entitySet="RequestSet"
+            smartFilterId="_IDGenSmartFilterBar"
+            initiallyVisibleFields="CreatedBy"
+            tableType="Table"
+            useExportToExcel="true"
+            beforeExport="onBeforeExport"
+            header="Request"
+            persistencyKey="SmartTableAnalytical_Explored"
+            enableAutoBinding="true"
+            useTablePersonalisation="false"
+            class="sapUiResponsiveContentPadding"
+            beforeRebindTable="onBeforeRebind"
+        >
+            <!-- layout data used to make the table growing but the filter bar fixed -->
+
+            <Table
+                id="manualTable"
+                inset="true"
+                growing="true"
+                growingThreshold="10"
+            >
+                <columns>
+                    <Column>
+                        <Text text="Request ID" />
+                    </Column>
+                    <Column>
+                        <Text text="Status" />
+                    </Column>
+                    <Column>
+                        <Text text="Permit Type" />
+                    </Column>
+                    <Column>
+                        <Text text="Initated Date" />
+                    </Column>
+                    <!-- <Column>
+                        <Text text="Created At" />
+                    </Column> -->
+                </columns>
+                <items>
+                    <ColumnListItem
+                        type="Navigation"
+                        press="onColumnListItemPress"
+                    >
+                        <cells>
+                        <Text text="{path: 'RequestId'}" />
+                        <Text text="{path: 'Status', formatter: '.formatter.getStatusText'}" />
+                        <Text text="{path: 'PermitType', formatter: '.formatter.getPermitTypeText'}" />
+                        <Text text="{path: 'InitiatedDate', formatter: '.formatter.formatDate'}" />
+                    
+                        </cells>
+                        
+                        
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </smartTable:SmartTable>
+    </Page>
+</mvc:View>
