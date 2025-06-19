@@ -18,10 +18,11 @@ function (Controller, formatter) {
                     // Fetching the user role to determine visibility of filters
                     oModel.read(sUrl, {
                         success: function (oData) {
-                            if (oData.Role === "Approver") {
-                                oFilterMdoel.setProperty("/visible", true);
-                            } else if (oData.Role === "Marketing")
-                                oFilterMdoel.setProperty("/visible", false);
+                            if (oData.Role === "Approver" || oData.Role === "Viewer") {
+                                oFilterMdoel.setProperty("/mode", "Approver");
+                            }
+                            else
+                                oFilterMdoel.setProperty("/mode", "Requester");
                             oView.setBusy(false);
                         },
                         error: function (oError) {
@@ -30,6 +31,11 @@ function (Controller, formatter) {
                     });
                 },
                 
+                  /**
+                 * @description Handles the binding parameter before binding the table
+                 * @param {
+                 * } oEvent 
+                 */
                 onBeforeRebind(oEvent) {
                     const oStatusComboBox = this.byId("requestStatus");
                     const oPermitTypeComboBox = this.byId("permitType");
@@ -55,7 +61,7 @@ function (Controller, formatter) {
                                         new sap.ui.model.Filter(
                                             "Status",
                                             sap.ui.model.FilterOperator.EQ,
-                                            sStatusKey
+                                            element[1]
                                         )
                                     );
                                     break;
@@ -79,7 +85,7 @@ function (Controller, formatter) {
                                     );
                                     break;
                                 case "InitiatedDate":
-                                    var dateRange = element[1].split(" - ");
+                                    const dateRange = element[1].split(" - ");
 
                                     /**
                                      * Used for parsing the date and adjusting it to the local timezone
@@ -88,23 +94,22 @@ function (Controller, formatter) {
                                      */
 
                                     function parseAndAdjustDate(dateStr) {
-                                        var date = new Date(dateStr);
-                                        date.setDate(date.getDate()); 
-                                        return date;
+                                            const date = new Date(dateStr);
+                                        date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+                                        // Format as YYYY-MM-DD for SAP
+                                        return date.toISOString().split("T")[0];
                                     }
 
-                                    var fromDate = parseAndAdjustDate(
+                                    const fromDate = parseAndAdjustDate(
                                         dateRange[0]
                                     );
-                                    var toDate = parseAndAdjustDate(
+                                    const toDate = parseAndAdjustDate(
                                         dateRange[1]
                                     );
 
-                                    fromDate.setHours(0, 0, 0, 0);
-                                    toDate.setHours(23, 59, 59, 999);
 
                                     if (dateRange[0] === dateRange[1]) {
-                                        oBindingParams.filters.push(new sap.ui.model.Filter("InitiatedDate", sap.ui.model.FilterOperator.EQ,toDate));
+                                        oBindingParams.filters.push(new sap.ui.model.Filter("InitiatedDate", sap.ui.model.FilterOperator.EQ, fromDate));
                                     } else {
                                         oBindingParams.filters.push(
                                             new sap.ui.model.Filter({
@@ -131,7 +136,7 @@ function (Controller, formatter) {
                                         new sap.ui.model.Filter(
                                             "PermitType",
                                             sap.ui.model.FilterOperator.EQ,
-                                            sPermitTypeKey
+                                            element[1]
                                         )
                                     );
                                     break;
@@ -139,9 +144,6 @@ function (Controller, formatter) {
                                     break;
                             }
                     });
-
-                    console.log("test");
-                    // Clear existing filters if needed
                 },
 
                 
