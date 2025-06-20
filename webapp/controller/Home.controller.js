@@ -94,7 +94,7 @@ function (Controller, formatter) {
                                      */
 
                                     function parseAndAdjustDate(dateStr) {
-                                            const date = new Date(dateStr);
+                                     const date = new Date(dateStr);
                                         date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
                                         // Format as YYYY-MM-DD for SAP
                                         return date.toISOString().split("T")[0];
@@ -165,7 +165,7 @@ function (Controller, formatter) {
                     CrossApplicationNavigation.toExternal({
                         target: {
                             semanticObject: "ZMKTCAMP",
-                            action: "display",
+                            action: "create",
                         },
                         params: {
                             RequestId: reqId,
